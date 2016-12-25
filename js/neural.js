@@ -36,6 +36,26 @@ var TimeoutConstant = 20;
 
 var MaxNodes = 1000000;
 
+function getPostions(){
+
+}
+
+function getTile(){
+
+}
+
+function getSprites(){
+
+}
+
+function getExtendedSprites(){
+
+}
+
+function getInputs(){
+	
+}
+
 function sigmoid(x){
 	return 2/(1+math.exp(-4.9*x))-1;
 }
