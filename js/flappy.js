@@ -3,6 +3,7 @@
 //selection,crossover,mutation
 var gap = 250;
 var pipWidth = 127;
+//var mutationChance;
 
 var max = {
 	generation: 1,
@@ -47,7 +48,7 @@ function makeFirstGeneration(){
 	}
 }
 
-function neuralTick(piepDelay,x,y){//game speed and if there is upcoming obstable
+function neuralTick(pipeDelay,x,y){//game speed and if there is upcoming obstable
 	if(d==undefined||d==null){//if no upcoming obstacles
 		return;
 	}
@@ -56,10 +57,14 @@ function neuralTick(piepDelay,x,y){//game speed and if there is upcoming obstabl
 
 
 function simulate(pipeDelay,x,y){
-	if(isNearPipe(x,Math.floor(chromosomes[count].getFinalFlapDistanceDX(pipeDelay)))){
-		while(y<Math.floor(chromosomes[count].getFinalFlapFistanceDY(pipeDelay))+gap){
-			flap();
+	do{
+		flap();//to keep bird in air
+		if(isNearPipe(x,Math.floor(chromosomes[count].getFinalFlapDistanceDX(pipeDelay)))){
+			break;
 		}
+	}while(y>0);
+	while(y>0&&y<Math.floor(chromosomes[count].getFinalFlapFistanceDY(pipeDelay))+gap){
+			flap();	
 	}
 }
 
@@ -68,7 +73,10 @@ function isNearPipe(birdx,pipex){
 		true;
 	}else{
 		return false;
-	}
+	} 
+}
+
+function isAboveGroud(y){
 }
 
 function flap(){
@@ -92,20 +100,51 @@ function birdDied(fitness, realFitness){
 	chromosome()
 }
 
-function sortByDistance(){
-
+function sortByFitness(){//calculate fitness using time
+	chromosomes.sort(compareByFitness);
+	console.log("Top bird of generation" + generation + ": ");
+	console.log(chromosomes[0]);
 }
 
-function compareByDistance(){
-
+function compareByFitness(genome1, genome2){
+	if(genome1.fitness<genome2.fitness){
+		return 1;
+	}else if(genome2.fitness<genome1.fitness){
+		return -1;
+	}else{
+		return 0;
+	}
 }
 
 function killHalf(){
-
+	sortByFitness();
+	chromosomes.splice(chromosomes.length/2,chromosomes.length/2);
+	console.log(chromosomes);
+	for(var i = 0; i<GENOME_PER_GEN/2;i++){
+		nextGen.push(chromosomes[i]);
+		mate(chromosomes)
+	}
 }
 
-function mate(){
+function mate(genome1, genome2){
+	console.log(genome1);
+	console.log(genome2);
+	console.log("Mate");
+	var child = newChromosome();
+	child.flapDistanceDX = (genome1.flapDistanceDX+genome2.flapDistanceDX)/(2*Math.random()*(0.10)+0.95);
+	child.flapDistanceDY = (genome1.flapDistanceDY+genome2.flapDistanceDY)/(2*Math.random()*(0.10)+0.95);
+	child.flapModifier = (genome1.flapModifier+genome2.flapModifier)/(2*Math.random()*(0.10)+0.95);
+	if(Math.random()<=0.03){//two percent chance of mutation
+		mutate(child);
+	}
+	nextGen.push(child);
+}
 
+function mutate(child){
+	console.log("Mutation");
+	child.flapDistanceDX *= (Math.random()*2);
+	child.flapDistanceDY *= (Math.random()*2);
+	child.flapModifier *= (Math.random()*2);
 }
 
 function getGenAve(){
