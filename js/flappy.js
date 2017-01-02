@@ -5,6 +5,16 @@ var gap = 250;
 var pipWidth = 127;
 //var mutationChance;
 
+createjs.Ticker.addEventListener("tick",fitnessStopWatch);
+
+function fitnessStopWatch(){
+	seconds1 = seconds;
+	if(!event.paused){
+		return seconds1;
+	}
+	
+}
+
 var max = {
 	generation: 1,
 	genome: 1,
@@ -100,7 +110,7 @@ function birdDied(fitness, realFitness){
 	chromosome()
 }
 
-function sortByFitness(){//calculate fitness using time
+function sortByFitness(){//calculate fitness using time or distance reached.
 	chromosomes.sort(compareByFitness);
 	console.log("Top bird of generation" + generation + ": ");
 	console.log(chromosomes[0]);
@@ -148,7 +158,7 @@ function mutate(child){
 }
 
 function getGenAve(){
-
+	
 }
 
 

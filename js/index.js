@@ -163,6 +163,7 @@
             function die() {
                 dead = true
                 bird.gotoAndPlay("dive");
+                //birdDied()//stops genome
                 createjs.Tween.removeTweens ( bird )
                 createjs.Tween.get(bird).wait(0).to({y:bird.y + 200, rotation: 90}, (380)/1.5, createjs.Ease.linear) //rotate back
                         .call(diveBird) // change bird to diving position
@@ -176,12 +177,13 @@
                 share.alpha = 0
                 share.x = w/2 - share.image.width/2
                 share.y = h/2 - share.image.height/2 - 50
-
+                restart();
+                /*
                 stage.addChild(start)
                 stage.addChild(share)
                 createjs.Tween.get(start).to({alpha:1, y: start.y + 50}, 400, createjs.Ease.sineIn).call(addClickToStart)
                 createjs.Tween.get(share).to({alpha:1, y: share.y + 50}, 400, createjs.Ease.sineIn).call(addClickToStart)
-                
+                */
             }
             function removeStart() {
                 stage.removeChild(start)
@@ -191,7 +193,7 @@
                 start.addEventListener("click", restart);
                 share.addEventListener("click", goShare);
             }
-
+            
             function goShare() {
                 var countText
                 if (counter.text == 1) {
@@ -203,6 +205,9 @@
             }
 
             function tick(event) {
+
+                //neuralTick(pipeDelay,bird.x,bird.y);//starts creating genomes
+
                 var deltaS = event.delta/1000;
 
                 var l = pipes.getNumChildren();
@@ -252,6 +257,7 @@
                                 if (collision) {
                                     if (collision.width > 8 && collision.height > 8) {
                                         die()
+                                        
                                     }
                                 }
                             }
