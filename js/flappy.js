@@ -5,15 +5,16 @@ var gap = 250;
 var pipWidth = 127;
 //var mutationChance;
 
-createjs.Ticker.addEventListener("tick",fitnessStopWatch);
+/*
+createjs.Ticker.addEventListener("neuralTick",fitnessStopWatch);
 
-function fitnessStopWatch(){
-	seconds1 = seconds;
-	if(!event.paused){
-		return seconds1;
-	}
-	
+var fitnessSeconds = 0;
+function fitnessStopWatch(event){
+if(event.paused){
+	fitnessSeconds = event.getTime();
 }
+}
+*/
 
 var max = {
 	generation: 1,
@@ -21,20 +22,15 @@ var max = {
 	fitness: 0,
 }
 
-function coordinate(x,y){
-	this.x=x,
-	this.y=y		
-}
 
 function newChromosome(){
 	var chromosome = {};
 	chromosome.flapDistanceDX = Math.floor(Math.random()*440);
 	chromosome.flapDistanceDY = 0;//vertical distance from lower pipe
 	chromosome.fitness=0;
-	chromosome.realFitness=0;
 	chromosome.flapModifier=Math.random()*2;//the constant at which flap parameters are modified
 	//0-2 because flap can either be decreased with 0-1 or increased with 1-2 
-	chromosome.getFinalFlapDistanceDX= function(speed){//altering flap distance
+	chromosome.getFinalFlapDistanceDX=function(speed){//altering flap distance
 		return this.flapDistanceDX-(this.flapModifier*speed);
 	}
 	chromosome.getFinalFlapFistanceDY=function(speed){
@@ -46,7 +42,7 @@ function newChromosome(){
 var generation = 1;
 var chromosomes = [];
 var nextGen = [];
-
+var count = 0;
 const GENOME_PER_GEN = 10;
 
 function makeFirstGeneration(){
@@ -59,9 +55,11 @@ function makeFirstGeneration(){
 }
 
 function neuralTick(pipeDelay,x,y){//game speed and if there is upcoming obstable
+	/*
 	if(d==undefined||d==null){//if no upcoming obstacles
 		return;
 	}
+	*/
 	simulate(pipeDelay,x,y);//(x,y) coordinate location of bird
 }
 
@@ -86,7 +84,7 @@ function isNearPipe(birdx,pipex){
 	} 
 }
 
-function isAboveGroud(y){
+function isAboveGroud(birdy){
 }
 
 function flap(){
@@ -101,13 +99,22 @@ function flap(){
 }
 
 
-function birdDied(fitness, realFitness){
+function birdDied(fitness){
 	if(realFitness>max.fitness){
 		max.fitness = realFitness;
 		max.generation = generation;
 		max.genome = count++;
 	}
-	chromosome()
+	chromosome[count].fitness = fitness;
+	if(count == chromosomes.length-1){
+		killHalf();
+		count = -1;
+		chromosomes=[];
+		chromosomes = nextGen;
+		generation++;
+		nextGen = [];
+	}
+	count++;
 }
 
 function sortByFitness(){//calculate fitness using time or distance reached.
@@ -157,9 +164,7 @@ function mutate(child){
 	child.flapModifier *= (Math.random()*2);
 }
 
-function getGenAve(){
-	
-}
+//function getGenAve(){}
 
 
 makeFirstGeneration();

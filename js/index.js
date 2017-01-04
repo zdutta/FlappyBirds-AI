@@ -143,7 +143,7 @@
             function restart() {
                 //hide anything on stage and show the score
                 pipes.removeAllChildren();
-                createjs.Tween.get(start).to({y:start.y + 10}, 50).call(removeStart)
+                //createjs.Tween.get(start).to({y:start.y + 10}, 50).call(removeStart)
                 counter.text = 0
                 counterOutline.text = 0
                 counterOutline.alpha = 0
@@ -163,11 +163,13 @@
             function die() {
                 dead = true
                 bird.gotoAndPlay("dive");
-                //birdDied()//stops genome
+                birdDied(event.getTime())//stops genome
                 createjs.Tween.removeTweens ( bird )
                 createjs.Tween.get(bird).wait(0).to({y:bird.y + 200, rotation: 90}, (380)/1.5, createjs.Ease.linear) //rotate back
                         .call(diveBird) // change bird to diving position
                         .to({y:ground.y - 30}, (h - (bird.y+200))/1.5, createjs.Ease.linear); //drop to the bedrock
+                restart();
+                /*
                 createjs.Tween.get(stage).to({alpha:0}, 100).to({alpha:1}, 100)
                 start = new createjs.Bitmap(loader.getResult("start"));
                 start.alpha = 0
@@ -177,8 +179,6 @@
                 share.alpha = 0
                 share.x = w/2 - share.image.width/2
                 share.y = h/2 - share.image.height/2 - 50
-                restart();
-                /*
                 stage.addChild(start)
                 stage.addChild(share)
                 createjs.Tween.get(start).to({alpha:1, y: start.y + 50}, 400, createjs.Ease.sineIn).call(addClickToStart)
@@ -206,7 +206,7 @@
 
             function tick(event) {
 
-                //neuralTick(pipeDelay,bird.x,bird.y);//starts creating genomes
+                neuralTick(pipeDelay,bird.x,bird.y);//starts creating genomes
 
                 var deltaS = event.delta/1000;
 
@@ -308,3 +308,4 @@
                 
                 stage.update(event);
             }
+
